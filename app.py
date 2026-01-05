@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Brick Breaker", layout="centered")
 
-st.title("🎮 Streamlit Brick Breaker")
+st.title("🎮 Brick Breaker")
 st.markdown("📱 스와이프로 바를 움직여 블럭을 부수세요")
 
 game_html = """
