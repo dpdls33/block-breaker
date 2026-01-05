@@ -66,13 +66,13 @@ function movePaddle(clientX) {
         paddleX = canvas.width - paddleWidth;
 }
 
-canvas.addEventListener("touchmove", e => {
-    e.preventDefault();
-    movePaddle(e.touches[0].clientX);
+// 🔥 포인터 이벤트 (모바일 + PC 공통)
+canvas.addEventListener("pointerdown", e => {
+    movePaddle(e.clientX);
 });
 
-canvas.addEventListener("mousemove", e => {
-    if (e.buttons === 1) movePaddle(e.clientX);
+canvas.addEventListener("pointermove", e => {
+    movePaddle(e.clientX);
 });
 
 // 충돌 판정
