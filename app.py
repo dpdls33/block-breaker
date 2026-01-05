@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(page_title="Brick Breaker", layout="centered")
 
 st.title("🎮 Streamlit Brick Breaker")
-st.markdown("← → 키로 바를 움직여 블럭을 부수세요")
+st.markdown("📱 스와이프로 바를 움직여 블럭을 부수세요")
 
 game_html = """
 <!DOCTYPE html>
@@ -14,6 +14,7 @@ canvas {
     background: #111;
     display: block;
     margin: auto;
+    touch-action: none;
 }
 </style>
 </head>
@@ -34,12 +35,8 @@ const ballRadius = 8;
 
 // Paddle
 const paddleHeight = 10;
-const paddleWidth = 75;
+const paddleWidth = 80;
 let paddleX = (canvas.width - paddleWidth) / 2;
-
-// Controls
-let rightPressed = false;
-let leftPressed = false;
 
 // Bricks
 const brickRowCount = 4;
@@ -58,15 +55,27 @@ for (let c = 0; c < brickColumnCount; c++) {
     }
 }
 
-document.addEventListener("keydown", e => {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
-    if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
-});
-document.addEventListener("keyup", e => {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
-    if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
+// 🔥 터치 & 마우스 스와이프 처리
+function movePaddle(clientX) {
+    const rect = canvas.getBoundingClientRect();
+    let xPos = clientX - rect.left;
+    paddleX = xPos - paddleWidth / 2;
+
+    if (paddleX < 0) paddleX = 0;
+    if (paddleX > canvas.width - paddleWidth)
+        paddleX = canvas.width - paddleWidth;
+}
+
+canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    movePaddle(e.touches[0].clientX);
 });
 
+canvas.addEventListener("mousemove", e => {
+    if (e.buttons === 1) movePaddle(e.clientX);
+});
+
+// 충돌 판정
 function collisionDetection() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
@@ -133,9 +142,6 @@ function draw() {
         if (x > paddleX && x < paddleX + paddleWidth) dy = -dy;
         else document.location.reload();
     }
-
-    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 5;
-    if (leftPressed && paddleX > 0) paddleX -= 5;
 
     x += dx;
     y += dy;
